@@ -1,1 +1,1 @@
-w_springcloud
+Spring Cloud Examples
