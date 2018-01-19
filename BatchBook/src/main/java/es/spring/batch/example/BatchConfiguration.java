@@ -1,6 +1,5 @@
 package es.spring.batch.example;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -82,12 +81,12 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public AmqpItemWriter<JSONObject> writer() {
+    public AmqpItemWriter<String> writer() {
     	rabbitTemplate.setExchange(EXCHANGE_NAME);
     	rabbitTemplate.setQueue(QUEUE_NAME);
     	rabbitTemplate.setRoutingKey(ROUTING_KEY);
 
-        return new AmqpItemWriter<JSONObject>(rabbitTemplate);
+        return new AmqpItemWriter<String>(rabbitTemplate);
     }
 
     @Bean
@@ -103,7 +102,7 @@ public class BatchConfiguration {
     @Bean
     public Step paso1() {
         return stepBuilderFactory.get("paso1")
-                .<Book, JSONObject> chunk(10)
+                .<Book, String> chunk(10)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
