@@ -1,10 +1,5 @@
 package com.rabbitMQ.receptor.receptorRabbit;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Properties;
-
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -13,36 +8,39 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 
 @Configuration
-@PropertySource("bootstrap.properties")
+@EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.rabbitMQ.receptor.receptorRabbit"})
 public class ConfRabbitReceptor {	    	
 	
-	@Value("${config.repository}")
-	public String valueRepo;
+	@Value("${" + Constantes.queue_name_tag + "}")
+	public String queueName;
+	
+	@Value("${" + Constantes.exchange_name_tag + "}")
+	public String exchangeName;
+	
+	@Value("${" + Constantes.routing_key_tag + "}")
+	public String routingKey;
+	
+	@Value("${" + Constantes.durable_queue_tag + "}")
+	public String durableString;
 	
 	@Bean
 	Constantes init() {
 		Constantes constan = new Constantes();
-		constan.setValueRepo(valueRepo);
-		Properties p = new Properties();
 		try {
-			p.load(new FileReader(valueRepo));
-			constan.setQUEUE_NAME(p.getProperty(Constantes.queue_name_tag));
-			constan.setEXCHANGE_NAME(p.getProperty(Constantes.exchange_name_tag));
-			constan.setROUTING_KEY(p.getProperty(Constantes.routing_key_tag));
-			String durableString = p.getProperty(Constantes.durable_queue_tag);
-			Boolean durable = durableString.trim().equalsIgnoreCase("true")?true:false;
+			constan.setQUEUE_NAME(queueName);
+			constan.setEXCHANGE_NAME(exchangeName);
+			constan.setROUTING_KEY(routingKey);
+			Boolean durable = durableString.trim().equalsIgnoreCase("true") ? true : false;
 			constan.setIS_DURABLE_QUEUE(durable);
-		} catch (FileNotFoundException e) {			
-			e.printStackTrace();
-		} catch (IOException e) {			
+		} catch (Exception e) {			
 			e.printStackTrace();
 		}		
 		return constan;

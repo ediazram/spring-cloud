@@ -4,10 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -38,11 +35,11 @@ public class BatchConfiguration {
     RabbitTemplate rabbitTemplate;
     
     
-    protected static final String EXCHANGE_NAME = "exchange_name";
-    protected static final String ROUTING_KEY = "routing_key";
+    protected static final String EXCHANGE_NAME = "NombreExchangeDurable";
+    protected static final String ROUTING_KEY = "keyRoutingDurable";
  
-    protected static final String QUEUE_NAME = "queue_name";
-    protected static final boolean IS_DURABLE_QUEUE = false;
+    protected static final String QUEUE_NAME = "NombreColaDurable";
+    protected static final boolean IS_DURABLE_QUEUE = true;
     
     
     @Bean
@@ -112,33 +109,33 @@ public class BatchConfiguration {
     
     
     // ////////////////////////////////////////////// //
-    @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
-        final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(BatchConfiguration.QUEUE_NAME);
-        container.setMessageListener(listenerAdapter);
-        
-        return container;
-    }
-    
-    @Bean
-    Receiver receiver() {
-        return new Receiver();
-    }
-    
-    @Bean
-    MessageListenerAdapter listenerAdapter(Receiver receiver) {
-        return new MessageListenerAdapter(receiver, Receiver.RECEIVE_METHOD_NAME);
-    }
-    
-    class Receiver {
-
-		public static final String RECEIVE_METHOD_NAME = "receiveMessage";
-		 
-	    public void receiveMessage(String message) {
-	        System.out.println("[Receiver] ha recibido el mensaje \"" + message + '"');
-	    }
-	}
+//    @Bean
+//    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
+//        final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//        container.setQueueNames(BatchConfiguration.QUEUE_NAME);
+//        container.setMessageListener(listenerAdapter);
+//        
+//        return container;
+//    }
+//    
+//    @Bean
+//    Receiver receiver() {
+//        return new Receiver();
+//    }
+//    
+//    @Bean
+//    MessageListenerAdapter listenerAdapter(Receiver receiver) {
+//        return new MessageListenerAdapter(receiver, Receiver.RECEIVE_METHOD_NAME);
+//    }
+//    
+//    class Receiver {
+//
+//		public static final String RECEIVE_METHOD_NAME = "receiveMessage";
+//		 
+//	    public void receiveMessage(String message) {
+//	        System.out.println("[Receiver] ha recibido el mensaje \"" + message + '"');
+//	    }
+//	}
     // ////////////////////////////////////////////// //
 }
